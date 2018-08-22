@@ -1,0 +1,148 @@
+---
+title: "1. Exploratory Data Analysis"
+output: html_notebook
+---
+
+```{r}
+load.libraries <- c('data.table', 'testthat', 'gridExtra', 'corrplot', 'GGally', 'ggplot2', 'e1071', 'dplyr','plyr')
+install.lib <- load.libraries[!load.libraries %in% installed.packages()]
+for(libs in install.lib) install.packages(libs, dependences = TRUE)
+sapply(load.libraries, require, character = TRUE)
+```
+
+### Data Source
+
+We will try to use data from 2 sources:
+
+* From Lahman's Database for statistics https://github.com/chadwickbureau/baseballdatabank 
+* From Retrosheet for game logs and boxscores at https://www.retrosheet.org/site.htm
+
+___
+__Copyright Notice:__ 
+
+_The Databank is historically based in part on the Lahman Baseball Database, 
+version 2015-01-24, which is Copyright (C) 1996-2015 by Sean Lahman._
+
+_This information is available free of charge from and is copyrighted
+by Retrosheet.  Interested parties may contact Retrosheet at 
+http://www.retrosheet.org. _
+
+
+### Teams Data
+
+
+```{r}
+Teams <- fread("./data_raw/core/Teams.csv")
+Teams %>% dim()
+```
+
+Ok there seems to be weird, since there is only 15 teams in NL and 15 teams in AL
+
+
+
+
+```{r}
+Teams %>% head()
+```
+
+```{r}
+Teams %>% tail()
+```
+
+
+Ok, we can see that this is simpy the historical data from 1871 of all the teams performance in all historical season up to 2017
+
+
+Let's take a look at available features for 
+```{r}
+Teams %>% colnames()
+```
+
+Now we wil separate those features into categorical, numerical 
+```{r}
+teams_categorical_feat <- names(Teams)[which(sapply(Teams, is.character))]
+teams_numerical_feat <- names(Teams)[which(sapply(Teams, is.numeric))]
+```
+
+```{r}
+teams_categorical_feat
+```
+
+```{r}
+teams_numerical_feat
+```
+
+__Feature abbreviation meaning:__
+
+* "HR": Home Run
+* "SHO": Shutout: A starting pitcher is credited with a shutout when he pitches the entire game for a team and does not allow the opposition to score. By definition, any pitcher who throws a shutout is also awarded a win. Because he recorded every out for his team and didn't allow a run, his team could only have won.
+* "BPF":
+* "Rank":
+* "BB":
+* "SV": 
+* "PPF":
+* "G": Number of games played per season
+* "SO" : Strikeouts
+* "IPouts":
+* "Ghome":
+* "SB":
+* "HA":
+* "W":
+* "CS":
+* "HRA":
+* "L":
+* "HBP":
+* "BBA":
+* "R":
+* "SF":
+* "SOA":
+* "AB":
+* "RA":
+* "E":
+* "H":
+* "ER":
+* "DP":
+* "2B": Double : A batter is credited with a double when he hits the ball into play and reaches second base without the help of an intervening error or attempt to put out another baserunner.
+* "ERA": Earned Run Average : Earned run average represents the number of earned runs a pitcher allows per nine innings -- with earned runs being any runs that scored without the aid of an error or a passed ball. ERA is the most commonly accepted statistical tool for evaluating pitchers.
+* "FP":
+* "3B":
+* "CG":
+* "attendance":
+
+
+### Batting
+
+```{r}
+Batting <- fread("data_raw/core/Batting.csv")
+Batting %>% dim()
+```
+```{r}
+Batting %>% tail()
+```
+
+```{r}
+Batting %>% colnames()
+```
+
+__Features:__
+
+* "G": Games
+* "AB": 
+* "R": 
+* "H": 
+* "2B": 
+* "3B": 
+* "HR": 
+* "RBI": 
+* "SB": 
+* "CS": 
+* "BB": 
+* "SO": 
+* "IBB": 
+* "HBP": 
+* "SH": 
+* "SF": 
+* "GIDP": 
+
+
+
