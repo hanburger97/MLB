@@ -3,11 +3,14 @@ title: "1. Exploratory Data Analysis"
 output: html_notebook
 ---
 
-```{r}
-load.libraries <- c('data.table', 'testthat', 'gridExtra', 'corrplot', 'GGally', 'ggplot2', 'e1071', 'dplyr','plyr')
+
+```{r setup, include=FALSE}
+load.libraries <- c('data.table', 'testthat', 'gridExtra', 'corrplot', 'GGally', 'ggplot2', 'e1071', 'dplyr','plyr', 'reticulate')
 install.lib <- load.libraries[!load.libraries %in% installed.packages()]
 for(libs in install.lib) install.packages(libs, dependences = TRUE)
 sapply(load.libraries, require, character = TRUE)
+use_python("~/anaconda3/envs/xtncpy/bin/python")
+knitr::knit_engines$set(python = reticulate::eng_python)
 ```
 
 ### Data Source
@@ -57,6 +60,9 @@ Let's take a look at available features for
 ```{r}
 Teams %>% colnames()
 ```
+
+_Note:_ 'teamIDretro' correspond to the team id used in the Retro database referred in the Game Log
+
 
 Now we wil separate those features into categorical, numerical 
 ```{r}
@@ -144,5 +150,44 @@ __Features:__
 * "SF": 
 * "GIDP": 
 
+
+### Players
+
+```{r}
+Players <- fread("data_raw/core/People.csv")
+Players %>% dim()
+```
+
+```{r}
+Players %>% head()
+```
+
+
+```{r}
+'harvm001' %in% Players$retroID
+```
+
+### Games Log
+
+
+```{bash}
+~/anaconda3/envs/xtncpy/bin/python ./scripts/formatGameLog.py
+```
+
+
+```{r}
+Games2016 <- fread('data/game_log/GL2016.csv')
+Games2016 %>% dim()
+```
+
+```{r}
+Games2016 %>% head()
+```
+
+
+```{r}
+summary(Games2016$HomeScore)
+```
+Note: here the ids such as in 'HomeStartingPitcher' is corresponding to the 'retro_id' of Players dataframe
 
 

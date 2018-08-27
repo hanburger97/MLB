@@ -1,0 +1,64 @@
+---
+title: "2. Feature Engineering"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+load.libraries <- c('data.table', 'testthat', 'gridExtra', 'corrplot', 'GGally', 'ggplot2', 'e1071', 'dplyr','plyr', 'reticulate', 'e1071')
+install.lib <- load.libraries[!load.libraries %in% installed.packages()]
+for(libs in install.lib) install.packages(libs, dependences = TRUE)
+sapply(load.libraries, require, character = TRUE)
+use_python("~/anaconda3/envs/xtncpy/bin/python")
+knitr::knit_engines$set(python = reticulate::eng_python)
+```
+
+### Loading up raw data per player and team performance
+
+```{r}
+players_raw <- fread('data_raw/core/People.csv')
+teams_raw <- fread('data_raw/core/Teams.csv')
+batting_raw  <- fread('data_raw/core/Teams.csv')
+pitching_raw <- fread('data_raw/core/Pitching.csv')
+fielding_raw  <- fread('data_raw/core/Fielding.csv')
+```
+
+we will train 2016 data to infer on 2017
+```{r}
+games <- fread('data/game_log/GL2016.csv')
+```
+
+```{r}
+isHomeWin <- function(homescore, visitorscore){
+  if (homescore > visitorscore){
+    1
+  }
+  else {
+    -1
+  }
+}
+
+games$homeWin <- as.vector(mapply(isHomeWin, games$HomeScore, games$VisitorScore))
+games$homeWin
+```
+
+
+```{r}
+games %>% colnames()
+```
+
+```{r}
+games_data <- games
+to_be_dropped <- c("VisitorScore","HomeScore", "HomeLeague", "VisitorLeague", "DayNight", "Dates")
+delete_col <- function(colname){
+  games_data[, colname:=NULL] 
+}
+sapply(to_be_dropped, delete_col)
+games_data %>% colnames()
+games_data %>% head()
+```
+
+```{r}
+games_data[,'HomeScore':=NULL]
+games_data
+```
+
