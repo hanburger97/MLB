@@ -183,3 +183,8 @@ def formatData(fileName):
         selected_data[key] = df_raw.loc[:, col_index]
     df_selected = pd.DataFrame.from_dict(selected_data)
     df_selected.to_csv(fileName+".formatted.csv")
+
+if __name__ == "__main__":
+
+    formatData('../data_raw/game_log/GL2016')
+    formatData('../data_raw/game_log/GL2017')
