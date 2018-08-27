@@ -176,15 +176,15 @@ def formatData(fileName):
         "HomeStartingPlayer_8": 154,
         "HomeStartingPlayer_9": 157,
     }
-    df_raw = pd.read_csv(fileName, names=[*range(1, 162)])
+    df_raw = pd.read_csv('./data_raw/game_log/'+fileName, names=[*range(1, 162)])
 
     selected_data = {}
     for key, col_index in selection.items():
         selected_data[key] = df_raw.loc[:, col_index]
     df_selected = pd.DataFrame.from_dict(selected_data)
-    df_selected.to_csv(fileName+".formatted.csv")
+    df_selected.to_csv("./data/game_log/"+fileName+".csv")
 
 if __name__ == "__main__":
 
-    formatData('../data_raw/game_log/GL2016')
-    formatData('../data_raw/game_log/GL2017')
+    formatData('GL2016')
+    formatData('GL2017')
