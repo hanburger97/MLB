@@ -140,16 +140,46 @@ Missing fields will be NULL.
 
 """
 
-def readData(fileName):
+def formatData(fileName):
     """
-    Trying to read in raw data of game log formats it into a list separated by commas
+    Read in a csv into a dataframe, add header as required, select relevant features for our games
     :param fileName:
     :return:
     """
-    fs = open(fileName, "r")
-    string_stream = fs.read()
-    list_of_values = string_stream.split()
-    if 0 == len(list_of_values):
-        raise Exception("List of values parsed incorrectly by readData() function")
-    return list_of_values
+    selection = {
+        "Dates": 1,
+        "Visitor": 4,
+        "VisitorLeague": 5,
+        "Home": 7,
+        'HomeLeague': 8,
+        "VisitorScore": 10,
+        "HomeScore": 11,
+        "DayNight": 13,
+        "VisitorStartingPitcher": 102,
+        "VisitorStartingPlayer_1": 106,
+        "VisitorStartingPlayer_2": 109,
+        "VisitorStartingPlayer_3": 112,
+        "VisitorStartingPlayer_4": 115,
+        "VisitorStartingPlayer_5": 118,
+        "VisitorStartingPlayer_6": 121,
+        "VisitorStartingPlayer_7": 124,
+        "VisitorStartingPlayer_8": 127,
+        "VisitorStartingPlayer_9": 130,
+        "HomeStartingPitcher": 104,
+        "HomeStartingPlayer_1": 133,
+        "HomeStartingPlayer_2": 136,
+        "HomeStartingPlayer_3": 139,
+        "HomeStartingPlayer_4": 142,
+        "HomeStartingPlayer_5": 145,
+        "HomeStartingPlayer_6": 148,
+        "HomeStartingPlayer_7": 151,
+        "HomeStartingPlayer_8": 154,
+        "HomeStartingPlayer_9": 157,
+    }
+    df_raw = pd.read_csv(fileName, names=[*range(1, 162)])
 
+    selected_data = {}
+    for key, col_index in selection.items():
+        selected_data[key] = df_raw.loc[:, col_index]
+    df_selected = pd.DataFrame.from_dict(selected_data)
+    df_selected.to_csv(fileName+".formatted.csv")
