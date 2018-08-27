@@ -49,16 +49,95 @@ games %>% colnames()
 ```{r}
 games_data <- games
 to_be_dropped <- c("VisitorScore","HomeScore", "HomeLeague", "VisitorLeague", "DayNight", "Dates")
-delete_col <- function(colname){
-  games_data[, colname:=NULL] 
+
+for (el in to_be_dropped){
+  games_data[[el]] <- NULL
 }
-sapply(to_be_dropped, delete_col)
+
 games_data %>% colnames()
 games_data %>% head()
 ```
 
+
+
+
 ```{r}
-games_data[,'HomeScore':=NULL]
+games_data %>% dim()
+```
+
+```{r}
+
+pitchers_feature <- c("G", "GD", "CG","SHO", "SV", "IPouts", "H", "ERA", "BB", "HBP")
+
+
+pitchers_feature_home <- as.vector(sapply(pitchers_feature, function(feat){
+  paste("HomeStartingPitcher", feat, sep = "_")
+}))
+
+pitchers_feature_visitor <- as.vector(sapply(pitchers_feature, function(feat){
+  paste("VisitorStartingPitcher", feat, sep = "_")
+}))
+pitchers_feature_home
+```
+
+
+```{r}
+games_data[,pitchers_feature_home] <- NA
+games_data[,pitchers_feature_visitor] <- NA
+games_data %>% colnames()
+```
+
+
+```{r}
+updateId <- function(df, feature){
+  newIDs <- c()
+  for (rID in df[[feature]]){
+    nID <- players_raw[[which(players_raw$retroID == rID),"playerID"]]
+    newIDs <- c(newIDs, nID)
+  }
+  df[[feature]] <- newIDs
+  df
+}
+
+```
+
+```{r}
+games_data <- updateId(games_data, "HomeStartingPitcher")
+games_data <- updateId(games_data, "HomeStartingPlayer_1")
+games_data <- updateId(games_data, "HomeStartingPlayer_2")
+games_data <- updateId(games_data, "HomeStartingPlayer_3")
+games_data <- updateId(games_data, "HomeStartingPlayer_4")
+games_data <- updateId(games_data, "HomeStartingPlayer_5")
+games_data <- updateId(games_data, "HomeStartingPlayer_6")
+games_data <- updateId(games_data, "HomeStartingPlayer_7")
+games_data <- updateId(games_data, "HomeStartingPlayer_8")
+games_data <- updateId(games_data, "HomeStartingPlayer_9")
+games_data <- updateId(games_data, "VisitorStartingPitcher")
+games_data <- updateId(games_data, "VisitorStartingPlayer_1")
+games_data <- updateId(games_data, "VisitorStartingPlayer_2")
+games_data <- updateId(games_data, "VisitorStartingPlayer_3")
+games_data <- updateId(games_data, "VisitorStartingPlayer_4")
+games_data <- updateId(games_data, "VisitorStartingPlayer_5")
+games_data <- updateId(games_data, "VisitorStartingPlayer_6")
+games_data <- updateId(games_data, "VisitorStartingPlayer_7")
+games_data <- updateId(games_data, "VisitorStartingPlayer_8")
+games_data <- updateId(games_data, "VisitorStartingPlayer_9")
+
 games_data
+```
+
+
+```{r}
+
+computeFeature <- function(df, featureList, colBaseName) {
+  
+  for (feat in featureList) {
+    colName <- paste(colBaseName, feat, sep = "_")  
+    df[[colName]] <- as.vector(sapply(df[[colBaseName]], function(x){
+      
+    }))
+  }
+  df
+}
 ```
 
