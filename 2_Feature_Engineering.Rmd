@@ -136,7 +136,20 @@ pitching_raw %>% tail()
 
 
 ```{r}
-subset(pitching_raw, (playerID=='melviti01' & yearID==2016))[['ERA']] 
+"PIT" %in% games_data$Home
+```
+
+
+```{r}
+as.numeric(subset(pitching_raw, (playerID=='volqued01' & yearID==2016 & teamID=="KCA"))[["ERA"]])
+a <- pitching_raw[which(pitching_raw$playerID=='volqued01' & pitching_raw$yearID==2016 & pitching_raw$teamID=="KCA"),] 
+if (0 == dim(a)){
+  print(TRUE)
+  }else{
+  print(FALSE)
+}
+a[['ERA']]
+a
 ```
 
 
@@ -147,9 +160,20 @@ computeFeature <- function(df_target, df_source, featureList, colBaseName) {
   
   for (feat in featureList) {
     colName <- paste(colBaseName, feat, sep = "_")  
-    df_target[[colName]] <- as.vector(sapply(df_target[[colBaseName]], function(x){
-      subset(df_source, (playerID==x & yearID==2016))[[feat]]
-    }))
+    df_target[[colName]] <- mapply(function(x, y){
+      #print(x)
+      #print(y)
+      row_source <- df_source[which(df_source$playerID==x & df_source$yearID==2016 & df_source$teamID==y),feat]
+      if (0 == dim(row_source)){
+        NA
+      }else{
+        row_source[[feat]]
+      }
+      
+    }, 
+    df_target[[colBaseName]], 
+    df_target$Home
+    )
   }
   df_target
 }
@@ -160,5 +184,9 @@ computeFeature <- function(df_target, df_source, featureList, colBaseName) {
 games_data <- computeFeature(games_data, pitching_raw, pitchers_feature, "HomeStartingPitcher")
 games_data
 
+```
+
+```{r}
+write.csv(games_data, file = "./data/TMP_GL.csv")
 ```
 
