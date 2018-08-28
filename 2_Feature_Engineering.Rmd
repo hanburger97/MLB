@@ -126,18 +126,39 @@ games_data <- updateId(games_data, "VisitorStartingPlayer_9")
 games_data
 ```
 
+```{r}
+players_raw %>% tail()
+```
+
+```{r}
+pitching_raw %>% tail()
+```
+
+
+```{r}
+subset(pitching_raw, (playerID=='melviti01' & yearID==2016))[['ERA']] 
+```
+
+
 
 ```{r}
 
-computeFeature <- function(df, featureList, colBaseName) {
+computeFeature <- function(df_target, df_source, featureList, colBaseName) {
   
   for (feat in featureList) {
     colName <- paste(colBaseName, feat, sep = "_")  
-    df[[colName]] <- as.vector(sapply(df[[colBaseName]], function(x){
-      
+    df_target[[colName]] <- as.vector(sapply(df_target[[colBaseName]], function(x){
+      subset(df_source, (playerID==x & yearID==2016))[[feat]]
     }))
   }
-  df
+  df_target
 }
+```
+
+
+```{r}
+games_data <- computeFeature(games_data, pitching_raw, pitchers_feature, "HomeStartingPitcher")
+games_data
+
 ```
 
